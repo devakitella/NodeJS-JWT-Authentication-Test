@@ -39,24 +39,28 @@ let users = [
 app.post('/api/login',(req,res) => {
     const  { username , password }= req.body;
 
+    let token;
     for(let user of users) {
-        if(username == user.username && password == user.password) {
-            let token = jwt.sign({id : user.id , username : user.username},secretkey,{expiresIn :'3m'}); //updated token epriration for 3 min
-            res.json({
-                success: true,
-                err: null,
-                token: token
-            });
+        
+        if(username == user.username && password == user.password){
+            token = jwt.sign({id: user.id,username:user.username}, secretkey,{expiresIn: '3m'});
             break;
         }
-        else {
-            res.status(401).json({
-                success: false,
-                token: null,
-                err: 'username or password is incorrect !!!'
+    }
+    if(token) {
+        res.json({
+            success: true,
+            err: null,
+            token: token
+        });
+    }
+    else {
+        res.status(401).json({
+            success: false,
+            token: null,
+            err: 'username or password is incorrect !!!'
 
-            });
-        }
+        });
     }
 })
 
